@@ -1,0 +1,22 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+my ($command, $file, $filetype);
+
+die "Usage: $0 [filename]\n" if (scalar(@ARGV) == 0);
+
+$file = $ARGV[0];
+
+die "$file doesn't exist" unless (-e $file);
+
+$filetype = `file $file`;
+if ($filetype =~ /ELF/)
+{
+    $command = 'arm-none-eabi-' if ($filetype =~ /ARM/);
+    $command .= 'objdump -d ' . $file . ' | less';
+    exec($command);
+}
+
+die "Unknown file format\n";
